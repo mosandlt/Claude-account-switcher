@@ -133,6 +133,33 @@ activate_profile() {
 
   echo "$profile" > "$STATE_FILE"
   echo "  Activated profile → $profile (${restored[*]})"
+
+  # Check for proxy configuration
+  check_proxy
+}
+
+check_proxy() {
+  if [[ -f "$CLAUDE_SETTINGS" ]]; then
+    if grep -q '"ANTHROPIC_BASE_URL".*"http://localhost:6655/anthropic/"' "$CLAUDE_SETTINGS" 2>/dev/null; then
+      echo ""
+      echo "  ⚠️  Proxy detected in settings (localhost:6655)"
+
+      # Check if proxy is already running
+      if lsof -i :6655 >/dev/null 2>&1; then
+        echo "  ✓ Proxy is already running"
+      else
+        echo "  ⚡ Proxy is not running"
+        read -r -p "  Start proxy with 'hai proxy start'? [Y/n]: " start_proxy
+        if [[ -z "$start_proxy" ]] || [[ "$start_proxy" =~ ^[Yy]$ ]]; then
+          echo ""
+          echo "  Starting proxy..."
+          hai proxy start
+        else
+          echo "  Skipped. Start manually with: hai proxy start"
+        fi
+      fi
+    fi
+  fi
 }
 
 show_status() {
