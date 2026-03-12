@@ -47,6 +47,12 @@ The script **saves both files** before switching, ensuring authentication AND se
 - Prevents removal of active account
 - First-run detection and setup
 
+⚡ **Proxy Auto-Detection**
+- Detects proxy configuration in settings (`ANTHROPIC_BASE_URL`)
+- Checks if proxy is already running
+- Prompts to start proxy automatically when needed
+- Seamless integration with `hai proxy start`
+
 ## First run
 
 If no profiles exist, it will prompt you to identify which account is currently active.
@@ -209,6 +215,29 @@ Different accounts may need different configurations:
 - **Model preferences**: Different default models per account
 - **Themes/preferences**: Keep your work setup separate from personal
 - **Environment variables**: Custom API keys, base URLs, etc.
+
+## Proxy Auto-Detection
+
+When switching accounts, the script automatically detects if your settings include a proxy configuration (e.g., `ANTHROPIC_BASE_URL: "http://localhost:6655/anthropic/"`).
+
+**What happens:**
+1. Script detects proxy configuration in `~/.claude/settings.json`
+2. Checks if the proxy is already running (port 6655)
+3. If not running, prompts: `Start proxy with 'hai proxy start'? [Y/n]:`
+4. Default is **Yes** (just press Enter to start)
+
+**Example output:**
+```
+  Activated profile → work (auth settings)
+
+  ⚠️  Proxy detected in settings (localhost:6655)
+  ⚡ Proxy is not running
+  Start proxy with 'hai proxy start'? [Y/n]:
+
+  Starting proxy...
+```
+
+This ensures your proxy is ready before starting Claude, preventing connection errors.
 
 ## Comparison with cc-account-switcher
 
